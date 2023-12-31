@@ -7,5 +7,13 @@
 // * Use a function to add two numbers together
 // * Use a function to display the result
 // * Use the "{:?}" token in the println macro to display the result
+fn add(a : i32, b : i32) -> i32 {
+    a + b
+}
+fn display(a : i32) {
+    println!("{:?}", a);
+}
+fn main() {
+    display(add(3,2));
+}
 
-fn main() {}

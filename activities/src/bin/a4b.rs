@@ -10,4 +10,11 @@
 // * Use a match expression to determine which message to display
 // * Use an underscore (_) to match on any value
 
-fn main() {}
+fn main() {
+    let n = 2;
+    match n {
+        2 => println!("This is my favorites"),
+        3 => println!("hello"),
+        _ => println!("I'm so bored"),
+    }
+}

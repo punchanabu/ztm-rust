@@ -9,4 +9,15 @@
 // * Use an if..else if..else block to determine which message to display
 // * Use the println macro to display messages to the terminal
 
-fn main() {}
+fn main() {
+    let my_num = 5;
+    if my_num == 5 {
+        println!("{:?} is equal to 5", my_num);
+    }
+    else if my_num > 5 {
+        println!("{:?} is bigger than 5", my_num);
+    }
+    else {
+        println!("{:?} is smaller than 5", my_num);
+    }
+}
