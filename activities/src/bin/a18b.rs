@@ -6,25 +6,7 @@
 //   making the question mark operator the perfect thing to use to keep
 //   the code managable.
 //
-// Requirements:
-// * Write the body of the `authorize` function. The steps to authorize a user
-//   are:
-//     1. Connect to the database
-//     2. Find the employee with the `find_employee` database function
-//     3. Get a keycard with the `get_keycard` database function
-//     4. Determine if the keycard's `access_level` is sufficient, using the
-//        `required_access_level` function implemented on `ProtectedLocation`.
-//        * Higher `access_level` values grant more access to `ProtectedLocations`.
-//          1000 can access 1000 and lower. 800 can access 500 but not 1000, ...
-// * Run the program after writing your `authorize` function. Expected output:
-//     Ok(Allow)
-//     Ok(Deny)
-//     Err("Catherine doesn't have a keycard")
-// * Use the question mark operator within the `authorize` function.
-//
-// Notes:
-// * Only the `authorize` function should be changed. Everything else can remain
-//   unmodified.
+
 
 #[derive(Clone, Copy, Debug)]
 enum ProtectedLocation {
@@ -91,12 +73,37 @@ enum AuthorizationStatus {
     Allow,
     Deny,
 }
-
+// * Write the body of the `authorize` function. The steps to authorize a user
+//   are:
+// * Run the program after writing your `authorize` function. Expected output:
+//     Ok(Allow)
+//     Ok(Deny)
+//     Err("Catherine doesn't have a keycard")
+// * Use the question mark operator within the `authorize` function.
+//
+// Notes:
+// * Only the `authorize` function should be changed. Everything else can remain
+//   unmodified.
 fn authorize(
     employee_name: &str,
     location: ProtectedLocation,
 ) -> Result<AuthorizationStatus, String> {
-    // put your code here
+
+    let db = Database::connect()?;
+
+    let employee = db.find_employee(employee_name)?;
+
+    let keycard = db.get_keycard(&employee)?;
+
+    let access_level = location.required_access_level();
+    
+    // println!("{:?} >= {:?}", keycard.access_level, access_level);
+
+    if keycard.access_level >= access_level {
+        return Ok(AuthorizationStatus::Allow)
+    }
+    return Ok(AuthorizationStatus::Deny)
+
 }
 
 fn main() {
