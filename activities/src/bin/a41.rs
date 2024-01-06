@@ -1,4 +1,4 @@
-// Topic: Arc, Mutex, and Threads
+ // Topic: Arc, Mutex, and Threads
 //
 // Summary:
 // Modify the existing multi-threaded program to include a global
