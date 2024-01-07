@@ -1,32 +1,63 @@
-use std::io;
+struct Dimensions {
+    width: f64,
+    height: f64,
+    depth: f64,
+}
 
-fn get_input() -> io::Result<String> {
-    let mut buffer = String::new();
-    io::stdin().read_line(&mut buffer)?;// indicate this function may possibly failed;
-    Ok(buffer.trim().to_owned())
+trait ConveyItem {
+    fn weight(&self) -> f64;
+    fn dimensions(&self) -> Dimensions;
+}
+
+struct ConveyorBelt<T: ConveyItem> {
+    pub items: Vec<T>,
+}
+
+impl<T : ConveyItem> ConveyorBelt<T> {
+    pub fn add(&mut self, item: T) {
+        self.items.push(item);
+    }
+}
+
+struct CarPart {
+    width: f64,
+    height: f64,
+    depth: f64,
+    weight: f64,
+    part_number: String,
+}
+
+impl Default for CarPart {
+    fn default() -> Self {
+        Self {
+            width: 5.0,
+            height: 1.0,
+            depth: 2.0,
+            weight: 3.0,
+            part_number: "abc".to_string()
+        }
+    }
+}
+
+impl ConveyItem for CarPart {
+    fn weight(&self) -> f64 {
+        self.weight
+    }
+
+    fn dimensions(&self) -> Dimensions {
+        Dimensions {
+            width : self.width,
+            height : self.height,
+            depth : self.depth,
+        }
+    }
 }
 
 
 fn main() {
-    let mut all_input = vec![];
-    let mut times_input = 0;
-    while times_input < 2 {
-        match get_input() {
-            Ok(words) => {
-                all_input.push(words);
-                times_input += 1;    
-            }
-            Err(e) => {
-                println!("error: {:?}", e);
-            }
-        }
-    }
+    let mut belt: ConveyorBelt<CarPart> = ConveyorBelt { items : vec![] };
+    belt.add(CarPart::default());
 
-    for input in all_input {
-        println!(
-            "Original {:?}, Capitalized: {:?}",
-            input,
-            input.to_uppercase(),
-        )
-    }
+    // let mut belt = ConveyorBelt { items : vec![]};
+    
 }
