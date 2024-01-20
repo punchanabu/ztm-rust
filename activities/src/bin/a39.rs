@@ -28,6 +28,8 @@ enum LightMsg {
     // Add additional variants needed to complete the exercise
     ChangeColor(u8, u8, u8),
     Disconnect,
+    Off,
+    On,
 }
 
 enum LightStatus {
@@ -37,11 +39,59 @@ enum LightStatus {
 
 fn spawn_light_thread(receiver: Receiver<LightMsg>) -> JoinHandle<LightStatus> {
     // Add code here to spawn a thread to control the light bulb
+    thread::spawn(move || {
+        let mut light_status = LightStatus::Off;
+        loop {
+            if let Ok(msg) = receiver.recv() {
+                match msg {
+                    LightMsg::ChangeColor(r, g, b) => {
+                        println!("Changing color to ({}, {}, {})", r, g, b);
+                        match light_status {
+                            LightStatus::Off => {
+                                println!("Light is off, turning on");
+                            }
+                            LightStatus::On => {
+                                println!("Light is on");
+                            }
+                        }
+                    }
+                    LightMsg::On => {
+                        println!("Turning light on");
+                        light_status = LightStatus::On;
+                    }
+                    LightMsg::Off => {
+                        println!("Turning light off");
+                        light_status = LightStatus::Off;
+                    }
+                    LightMsg::Disconnect => {
+                        println!("Disconnecting");
+                        break;
+                    }
+                }
+            } else {
+                println!("Channel disconnected");
+                light_status = LightStatus::Off;
+                break;
+            }
+        }
+        light_status
+    })
 }
 
-fn main() {}
+fn main() {
+    let (s, r) = unbounded();
 
-#[cfg(test)]
+    let light = spawn_light_thread(r);
+
+    let _ = s.send(LightMsg::On);
+    let _ = s.send(LightMsg::ChangeColor(255, 0, 0));
+    let _ = s.send(LightMsg::ChangeColor(0, 255, 0));
+    let _  =s.send(LightMsg::ChangeColor(0, 0, 255));
+    s.send(LightMsg::Off);
+    s.send(LightMsg::Disconnect);
+
+    let light_status = light.join();
+}
 mod test {
     use super::*;
     use crossbeam_channel::unbounded;
